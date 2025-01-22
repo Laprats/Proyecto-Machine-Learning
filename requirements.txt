@@ -1,0 +1,9 @@
+packaging==24.0
+pandas
+numpy
+numpydoc
+nest-asyncio==1.6.0
+matplotlib==3.9.2
+matplotlib-inline==0.1.6
+pyzmq==25.1.2
+sweetviz==2.3.1
