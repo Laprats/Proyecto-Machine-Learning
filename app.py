@@ -2,14 +2,20 @@
  "cells": [
   {
    "cell_type": "code",
-   "execution_count": 5,
-   "id": "45a15dc8-a5b2-474c-aca2-812877dd44a5",
+   "execution_count": 1,
+   "id": "be170f87-14c8-4417-93e9-254ab878c2c9",
    "metadata": {},
    "outputs": [
     {
      "name": "stderr",
      "output_type": "stream",
      "text": [
+      "2025-01-22 16:43:48.416 \n",
+      "  \u001b[33m\u001b[1mWarning:\u001b[0m to view this Streamlit app on a browser, run it with the following\n",
+      "  command:\n",
+      "\n",
+      "    streamlit run C:\\Users\\aprats\\AppData\\Roaming\\Python\\Python312\\site-packages\\ipykernel_launcher.py [ARGUMENTS]\n",
+      "2025-01-22 16:43:48.420 Session state does not function when running a script without `streamlit run`\n",
       "C:\\Users\\aprats\\AppData\\Local\\anaconda3\\Lib\\site-packages\\sklearn\\base.py:493: UserWarning: X does not have valid feature names, but StandardScaler was fitted with feature names\n",
       "  warnings.warn(\n"
      ]
@@ -38,31 +44,31 @@
     "\n",
     "age = st.number_input(\"Edad del cliente:\", min_value=18, max_value=100, step=1)\n",
     "balance = st.number_input(\"Balance promedio en la cuenta bancaria:\")\n",
+    "education = st.selectbox(\"Nivel educativo del cliente:\", options=['Primario', 'Secundario', 'Terciario'])\n",
     "housing = st.selectbox(\"¿Tiene hipoteca?\", options=['Sí', 'No'])\n",
     "loan = st.selectbox(\"¿Tiene préstamo personal?\", options=['Sí', 'No'])\n",
-    "poutcome = st.selectbox(\"Resultado de la campaña previa:\", options=['Éxito', 'Fracaso', 'Desconocido'])\n",
     "\n",
     "\n",
-    "\n",
+    "education_map = {'Primario': 0, 'Secundario': 1, 'Terciario': 2}\n",
     "housing_map = {'No': 0, 'Sí': 1}\n",
     "loan_map = {'No': 0, 'Sí': 1}\n",
-    "poutcome_map = {'Desconocido': 0, 'Fracaso': 1, 'Éxito': 2}\n",
     "\n",
     "\n",
-    "input_data = np.array([[age, balance, housing_map[housing], loan_map[loan], poutcome_map[poutcome]]])\n",
+    "\n",
+    "input_data = np.array([[age, balance, education_map[education], housing_map[housing], loan_map[loan]]])\n",
     "input_data_scaled = scaler.transform(input_data)\n",
     "\n",
     "\n",
     "if st.button(\"Predecir\"):\n",
     "    prediction = model.predict(input_data_scaled)\n",
     "    resultado = \"Aceptará el producto\" if prediction[0] == 1 else \"No aceptará el producto\"\n",
-    "    st.subheader(f\"Resultado de la predicción: {resultado}\")\n"
+    "    st.subheader(f\"Resultado de la predicción: {resultado}\")"
    ]
   },
   {
    "cell_type": "code",
    "execution_count": null,
-   "id": "80660bbb-e94b-44a5-8312-f8bfe85b3670",
+   "id": "90cac63a-7142-45c9-b8c0-d43c29abf0ef",
    "metadata": {},
    "outputs": [],
    "source": []
