@@ -1,9 +1,20 @@
-packaging==24.0
-pandas
-numpy
-numpydoc
-nest-asyncio==1.6.0
-matplotlib==3.9.2
-matplotlib-inline==0.1.6
-pyzmq==25.1.2
-sweetviz==2.3.1
+sweetviz (2.3.1)
+pandas!=1.0.0,!=1.0.1,!=1.0.2,>=0.25.3 
+numpy>=1.16.0 
+matplotlib>=3.1.3 
+tqdm>=4.43.0 i
+scipy>=1.3.2 
+jinja2>=2.11.1 
+importlib-resources>=1.2.0 
+MarkupSafe>=2.0 in )
+contourpy>=1.0.1 in 
+cycler>=0.10 
+fonttools>=4.22.0 
+kiwisolver>=1.3.1 
+packaging>=20.0 
+pillow>=8 
+pyparsing>=2.3.1
+python-dateutil>=2.7 
+pytz>=2020.1 
+tzdata>=2022.7 
+six>=1.5
