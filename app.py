@@ -2,30 +2,15 @@
  "cells": [
   {
    "cell_type": "code",
-   "execution_count": 1,
-   "id": "be170f87-14c8-4417-93e9-254ab878c2c9",
+   "execution_count": null,
+   "id": "29495d19-d514-4e57-a4df-751c6fae3c34",
    "metadata": {},
-   "outputs": [
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "2025-01-22 16:43:48.416 \n",
-      "  \u001b[33m\u001b[1mWarning:\u001b[0m to view this Streamlit app on a browser, run it with the following\n",
-      "  command:\n",
-      "\n",
-      "    streamlit run C:\\Users\\aprats\\AppData\\Roaming\\Python\\Python312\\site-packages\\ipykernel_launcher.py [ARGUMENTS]\n",
-      "2025-01-22 16:43:48.420 Session state does not function when running a script without `streamlit run`\n",
-      "C:\\Users\\aprats\\AppData\\Local\\anaconda3\\Lib\\site-packages\\sklearn\\base.py:493: UserWarning: X does not have valid feature names, but StandardScaler was fitted with feature names\n",
-      "  warnings.warn(\n"
-     ]
-    }
-   ],
+   "outputs": [],
    "source": [
     "import streamlit as st\n",
     "import pickle\n",
     "import numpy as np\n",
-    "\n",
+    "import pandas as pd\n",
     "\n",
     "with open('model.pkl', 'rb') as file:\n",
     "    model = pickle.load(file)\n",
@@ -33,9 +18,7 @@
     "with open('scaler.pkl', 'rb') as file:\n",
     "    scaler = pickle.load(file)\n",
     "\n",
-    "\n",
     "st.title(\"Predicción de Aceptación de Producto Bancario\")\n",
-    "\n",
     "\n",
     "st.write(\"\"\"\n",
     "Ingrese los datos del cliente para predecir si aceptará o no el producto.\n",
@@ -48,30 +31,34 @@
     "housing = st.selectbox(\"¿Tiene hipoteca?\", options=['Sí', 'No'])\n",
     "loan = st.selectbox(\"¿Tiene préstamo personal?\", options=['Sí', 'No'])\n",
     "\n",
-    "\n",
     "education_map = {'Primario': 0, 'Secundario': 1, 'Terciario': 2}\n",
     "housing_map = {'No': 0, 'Sí': 1}\n",
     "loan_map = {'No': 0, 'Sí': 1}\n",
     "\n",
     "\n",
-    "\n",
     "input_data = np.array([[age, balance, education_map[education], housing_map[housing], loan_map[loan]]])\n",
-    "input_data_scaled = scaler.transform(input_data)\n",
     "\n",
+    "\n",
+    "try:\n",
+    "    input_data_df = pd.DataFrame(input_data, columns=['age', 'balance', 'education', 'housing', 'loan'])\n",
+    "\n",
+    "  \n",
+    "    input_data_scaled = scaler.transform(input_data_df)\n",
+    "except Exception as e:\n",
+    "    st.error(f\"Error al preparar los datos: {e}\")\n",
+    "    input_data_scaled = None\n",
     "\n",
     "if st.button(\"Predecir\"):\n",
-    "    prediction = model.predict(input_data_scaled)\n",
-    "    resultado = \"Aceptará el producto\" if prediction[0] == 1 else \"No aceptará el producto\"\n",
-    "    st.subheader(f\"Resultado de la predicción: {resultado}\")"
+    "    if input_data_scaled is not None:\n",
+    "        try:\n",
+    "            prediction = model.predict(input_data_scaled)\n",
+    "            resultado = \"Aceptará el producto\" if prediction[0] == 1 else \"No aceptará el producto\"\n",
+    "            st.subheader(f\"Resultado de la predicción: {resultado}\")\n",
+    "        except Exception as e:\n",
+    "            st.error(f\"Error durante la predicción: {e}\")\n",
+    "    else:\n",
+    "        st.error(\"No se pudieron escalar los datos de entrada. Verifica los valores proporcionados.\")"
    ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "id": "90cac63a-7142-45c9-b8c0-d43c29abf0ef",
-   "metadata": {},
-   "outputs": [],
-   "source": []
   }
  ],
  "metadata": {
