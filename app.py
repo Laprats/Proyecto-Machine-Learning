@@ -2,23 +2,10 @@
  "cells": [
   {
    "cell_type": "code",
-   "execution_count": 1,
-   "id": "4c746786-77d5-4bb0-87ae-d1d7f535245e",
+   "execution_count": null,
+   "id": "47b5623c-34a8-4c6b-92ab-8d35ea5a9439",
    "metadata": {},
-   "outputs": [
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "2025-01-23 20:54:51.365 \n",
-      "  \u001b[33m\u001b[1mWarning:\u001b[0m to view this Streamlit app on a browser, run it with the following\n",
-      "  command:\n",
-      "\n",
-      "    streamlit run C:\\Users\\aprats\\AppData\\Roaming\\Python\\Python312\\site-packages\\ipykernel_launcher.py [ARGUMENTS]\n",
-      "2025-01-23 20:54:51.368 Session state does not function when running a script without `streamlit run`\n"
-     ]
-    }
-   ],
+   "outputs": [],
    "source": [
     "import streamlit as st\n",
     "import pickle\n",
@@ -27,6 +14,7 @@
     "\n",
     "with open('model.pkl', 'rb') as file:\n",
     "    model = pickle.load(file)\n",
+    "\n",
     "\n",
     "with open('scaler.pkl', 'rb') as file:\n",
     "    scaler = pickle.load(file)\n",
@@ -51,35 +39,35 @@
     "loan_map = {'No': 0, 'Sí': 1}\n",
     "\n",
     "\n",
-    "if age is None or balance is None:\n",
-    "    st.error(\"Por favor, ingrese valores válidos para la edad y el balance.\")\n",
-    "else:\n",
-    "    try:\n",
-    "        input_data = np.array([[age, balance, education_map[education], housing_map[housing], loan_map[loan]]])\n",
-    "        input_data_df = pd.DataFrame(input_data, columns=['age', 'balance', 'education', 'housing', 'loan'])\n",
+    "input_data = np.array([[age, balance, education_map[education], housing_map[housing], loan_map[loan]]])\n",
+    "\n",
+    "st.write(f\"Dimensiones de input_data_df: {input_data_df.shape}\")\n",
+    "st.write(f\"Columnas: {list(input_data_df.columns)}\")\n",
+    "\n",
+    "try:\n",
+    "    input_data_df = pd.DataFrame(input_data, columns=['age', 'balance', 'education', 'housing', 'loan'])\n",
     "\n",
     "    \n",
-    "        input_data_scaled = scaler.transform(input_data_df)\n",
+    "    input_data_scaled = scaler.transform(input_data_df)\n",
+    "except Exception as e:\n",
+    "    st.error(f\"Error al preparar los datos: {e}\")\n",
+    "    input_data_scaled = None\n",
     "\n",
-    "        if st.button(\"Predecir\"):\n",
+    "\n",
+    "if st.button(\"Predecir\"):\n",
+    "    if input_data_scaled is not None:\n",
+    "        try:\n",
+    "            st.write(f\"Datos escalados: {input_data_scaled}\")\n",
+    "            st.write(f\"Modelo cargado: {model}\")\n",
     "            \n",
     "            prediction = model.predict(input_data_scaled)\n",
     "            resultado = \"Aceptará el producto\" if prediction[0] == 1 else \"No aceptará el producto\"\n",
     "            st.subheader(f\"Resultado de la predicción: {resultado}\")\n",
-    "\n",
-    "    except KeyError as e:\n",
-    "        st.error(f\"Error en el mapeo de valores categóricos: {e}\")\n",
-    "    except Exception as e:\n",
-    "        st.error(f\"Error al preparar los datos: {e}\")\n"
+    "        except Exception as e:\n",
+    "            st.error(f\"Error durante la predicción: {e}\")\n",
+    "    else:\n",
+    "        st.error(\"No se pudieron escalar los datos de entrada. Verifica los valores proporcionados.\")\n"
    ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "id": "2ee39124-42dd-47e5-a175-bae369e58815",
-   "metadata": {},
-   "outputs": [],
-   "source": []
   }
  ],
  "metadata": {
