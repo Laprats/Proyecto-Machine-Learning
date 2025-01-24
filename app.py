@@ -78,3 +78,6 @@ if st.button("Predecir"):
             st.error(f"Error durante la predicción: {e}")
     else:
         st.error("No se pudieron preparar los datos. Verifica los valores ingresados.")
+
+st.write(f"Características esperadas por el modelo: {list(model.feature_names_in_)}")
+st.write(f"Características proporcionadas: {list(input_data_df.columns)}")
