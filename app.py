@@ -51,6 +51,13 @@ try:
 
     
     expected_features = list(model.feature_names_in_)
+
+    
+    for feature in expected_features:
+        if feature not in input_data_df.columns:
+            input_data_df[feature] = 0  
+
+    
     input_data_df = input_data_df[expected_features]
 
     
