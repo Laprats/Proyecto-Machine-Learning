@@ -1,7 +1,7 @@
 import streamlit as st
 import pickle
 import numpy as np
-import pandas as pd  
+import pandas as pd
 
 
 with open('model.pkl', 'rb') as file:
@@ -16,9 +16,11 @@ st.write("""
 Ingrese los datos del cliente para predecir si aceptará o no el producto.
 """)
 
-#
+
 age = st.number_input("Edad del cliente:", min_value=18, max_value=100, step=1)
 balance = st.number_input("Balance promedio en la cuenta bancaria:")
+pdays = st.number_input("Número de días desde el último contacto:", min_value=-1, step=1)
+previous = st.number_input("Número de contactos previos en la campaña:", min_value=0, step=1)
 education = st.selectbox("Nivel educativo del cliente:", options=['Primario', 'Secundario', 'Terciario'])
 housing = st.selectbox("¿Tiene hipoteca?", options=['Sí', 'No'])
 loan = st.selectbox("¿Tiene préstamo personal?", options=['Sí', 'No'])
@@ -29,8 +31,8 @@ housing_map = {'No': 0, 'Sí': 1}
 loan_map = {'No': 0, 'Sí': 1}
 
 
-input_data = np.array([[age, balance, education_map[education], housing_map[housing], loan_map[loan]]])
-input_data_df = pd.DataFrame(input_data, columns=['age', 'balance', 'education', 'housing', 'loan'])
+input_data = np.array([[age, balance, pdays, previous, education_map[education], housing_map[housing], loan_map[loan]]])
+input_data_df = pd.DataFrame(input_data, columns=['age', 'balance', 'pdays', 'previous', 'education', 'housing', 'loan'])
 
 
 try:
@@ -45,7 +47,7 @@ try:
     encoder = LabelEncoder()
     input_data_df['balance_category'] = encoder.fit_transform(input_data_df['balance_category'])
 
-    input_data_df['cluster'] = 2
+    input_data_df['cluster'] = 2  
 
     
     expected_features = list(model.feature_names_in_)
@@ -69,4 +71,3 @@ if st.button("Predecir"):
             st.error(f"Error durante la predicción: {e}")
     else:
         st.error("No se pudieron preparar los datos. Verifica los valores ingresados.")
-
