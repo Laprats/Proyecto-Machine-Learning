@@ -4,55 +4,55 @@ import numpy as np
 import pandas as pd
 
 
+with open('model.pkl', 'rb') as model_file:
+    model = pickle.load(model_file)
+
+
+with open('scaler.pkl', 'rb') as scaler_file:
+    scaler = pickle.load(scaler_file)
+
+
 st.title("Predicción de Aceptación de Producto Bancario")
-st.write("Ingrese los datos del cliente para predecir si aceptará o no el producto.")
+
+st.write("""
+Ingrese los datos del cliente para predecir si aceptará o no el producto.
+""")
 
 
 age = st.number_input("Edad del cliente:", min_value=18, max_value=100, step=1)
 balance = st.number_input("Balance promedio en la cuenta bancaria:")
 campaign = st.number_input("Número de contactos realizados durante esta campaña:")
+pdays = st.number_input("Número de días desde el último contacto previo:")
+previous = st.number_input("Número de contactos previos realizados:")
 housing = st.selectbox("¿Tiene hipoteca?", options=['Sí', 'No'])
 loan = st.selectbox("¿Tiene préstamo personal?", options=['Sí', 'No'])
-balance_to_age_ratio = balance / age  # Relación entre balance y edad
-balance_category = pd.cut([balance], bins=[-float('inf'), 0, 1000, 5000, float('inf')], labels=['Muy bajo', 'Bajo', 'Medio', 'Alto'])[0]
 
 
 housing_map = {'No': 0, 'Sí': 1}
 loan_map = {'No': 0, 'Sí': 1}
-balance_category_map = {'Muy bajo': 0, 'Bajo': 1, 'Medio': 2, 'Alto': 3}
-
-
-input_data = np.array([[housing_map[housing], loan_map[loan], balance_to_age_ratio, balance_category_map[balance_category]]])
-
-try:
-    input_data_df = pd.DataFrame(input_data, columns=['housing', 'loan', 'balance_to_age_ratio', 'balance_category'])
-
-    
-    st.write("Columnas procesadas antes de escalar:", list(input_data_df.columns))
-
-    
-    with open('scaler.pkl', 'rb') as file:
-        scaler = pickle.load(file)
-        st.write("Columnas esperadas por el escalador:", scaler.feature_names_in_)
-
-   
-    input_data_scaled = scaler.transform(input_data_df)
-except Exception as e:
-    st.error(f"Error al preparar los datos: {e}")
-    input_data_scaled = None
 
 
 try:
-    with open('model.pkl', 'rb') as file:
-        model = pickle.load(file)
-        st.write("Columnas esperadas por el modelo:", model.feature_names_in_)
+    input_data = np.array([[age, balance, campaign, pdays, previous, housing_map[housing], loan_map[loan]]])
+    input_data_df = pd.DataFrame(input_data, columns=['age', 'balance', 'campaign', 'pdays', 'previous', 'housing', 'loan'])
+    st.write(f"Columnas en el DataFrame antes del escalador: {input_data_df.columns.tolist()}")
 
-    if st.button("Predecir"):
-        if input_data_scaled is not None:
+    
+    expected_columns = scaler.feature_names_in_
+    if not all(col in input_data_df.columns for col in expected_columns):
+        st.error("Faltan columnas requeridas en los datos de entrada.")
+    else:
+        
+        input_data_df = input_data_df[expected_columns]
+        st.write("Columnas reordenadas correctamente:", input_data_df.columns.tolist())
+
+        
+        input_data_scaled = scaler.transform(input_data_df)
+
+        
+        if st.button("Predecir"):
             prediction = model.predict(input_data_scaled)
             resultado = "Aceptará el producto" if prediction[0] == 1 else "No aceptará el producto"
             st.subheader(f"Resultado de la predicción: {resultado}")
-        else:
-            st.error("No se pudieron preparar los datos. Verifica los valores ingresados.")
 except Exception as e:
-    st.error(f"Error al cargar el modelo o realizar la predicción: {e}")
+    st.error(f"Error al preparar los datos: {e}")
