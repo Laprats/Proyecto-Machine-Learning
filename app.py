@@ -24,15 +24,14 @@ balance = st.number_input("Balance promedio en la cuenta bancaria:")
 campaign = st.number_input("Número de contactos realizados durante esta campaña:")
 pdays = st.number_input("Número de días desde el último contacto previo:")
 previous = st.number_input("Número de contactos previos realizados:")
-housing = st.selectbox("¿Tiene hipoteca?", options=['Sí', 'No'])
-loan = st.selectbox("¿Tiene préstamo personal?", options=['Sí', 'No'])
+
 
 housing_map = {'No': 0, 'Sí': 1}
 loan_map = {'No': 0, 'Sí': 1}
 
 try:
     input_data = np.array([[age, balance, campaign, pdays, previous, housing_map[housing], loan_map[loan]]])
-    input_data_df = pd.DataFrame(input_data, columns=['age', 'balance', 'campaign', 'pdays', 'previous', 'housing', 'loan'])
+    input_data_df = pd.DataFrame(input_data, columns=['age', 'balance', 'campaign', 'pdays', 'previous'])
     st.write(f"Columnas en el DataFrame antes del escalador: {input_data_df.columns.tolist()}")
 
     expected_columns = scaler.feature_names_in_
