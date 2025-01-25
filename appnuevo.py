@@ -16,7 +16,7 @@ scaler_features = getattr(scaler, 'feature_names_in_', None)
 
 st.title("Predicción de Aceptación de Producto Bancario")
 
-
+#
 if model_features:
     st.write(f"Características esperadas por el modelo: {model_features}")
 else:
@@ -53,7 +53,7 @@ if model_features and not set(input_data.columns).issubset(model_features):
     st.error(f"Las columnas proporcionadas no coinciden con las esperadas por el modelo: {model_features}")
 else:
     try:
-        
+        s
         if scaler_features:
             input_data_scaled = scaler.transform(input_data[scaler_features])
         else:
@@ -66,3 +66,4 @@ else:
             st.subheader(f"Resultado de la predicción: {resultado}")
     except Exception as e:
         st.error(f"Error durante la escalación o predicción: {e}")
+
