@@ -43,7 +43,7 @@ input_data = pd.DataFrame([{
 
 for col in model_features:
     if col not in input_data.columns:
-        input_data[col] = 1  
+        input_data[col] = 0  
 
 input_data = input_data[model_features]
 
