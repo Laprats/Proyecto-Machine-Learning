@@ -7,12 +7,10 @@ import pandas as pd
 with open('model.pkl', 'rb') as model_file:
     model = pickle.load(model_file)
 
+
 with open('scaler.pkl', 'rb') as scaler_file:
     scaler = pickle.load(scaler_file)
 
-
-model_features = model.feature_names_in_
-scaler_features = scaler.feature_names_in_
 
 st.title("Predicción de Aceptación de Producto Bancario")
 
@@ -34,31 +32,27 @@ housing_map = {'No': 0, 'Sí': 1}
 loan_map = {'No': 0, 'Sí': 1}
 
 
-input_data = np.array([[age, balance, campaign, pdays, previous, housing_map[housing], loan_map[loan]]])
-input_data_df = pd.DataFrame(input_data, columns=['age', 'balance', 'campaign', 'pdays', 'previous', 'housing', 'loan'])
-
-
-for col in model_features:
-    if col not in input_data_df.columns:
-        input_data_df[col] = 0  
-
-
-input_data_df = input_data_df[model_features]
-
-
-st.write("Columnas en el DataFrame antes del escalador:", input_data_df.columns.tolist())
-
 try:
-    input_data_scaled = scaler.transform(input_data_df)
+    input_data = np.array([[age, balance, campaign, pdays, previous, housing_map[housing], loan_map[loan]]])
+    input_data_df = pd.DataFrame(input_data, columns=['age', 'balance', 'campaign', 'pdays', 'previous', 'housing', 'loan'])
+    st.write(f"Columnas en el DataFrame antes del escalador: {input_data_df.columns.tolist()}")
+
     
-   
-    st.write("Columnas reordenadas correctamente:")
-    st.json(list(input_data_df.columns))
+    expected_columns = scaler.feature_names_in_
+    if not all(col in input_data_df.columns for col in expected_columns):
+        st.error("Faltan columnas requeridas en los datos de entrada.")
+    else:
+        
+        input_data_df = input_data_df[expected_columns]
+        st.write("Columnas reordenadas correctamente:", input_data_df.columns.tolist())
 
-    if st.button("Predecir"):
-        prediction = model.predict(input_data_scaled)
-        resultado = "Aceptará el producto" if prediction[0] == 1 else "No aceptará el producto"
-        st.subheader(f"Resultado de la predicción: {resultado}")
+        
+        input_data_scaled = scaler.transform(input_data_df)
 
+        
+        if st.button("Predecir"):
+            prediction = model.predict(input_data_scaled)
+            resultado = "Aceptará el producto" if prediction[0] == 1 else "No aceptará el producto"
+            st.subheader(f"Resultado de la predicción: {resultado}")
 except Exception as e:
     st.error(f"Error al preparar los datos: {e}")
