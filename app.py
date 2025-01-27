@@ -22,8 +22,6 @@ Ingrese los datos del cliente para predecir si aceptará o no el producto.
 age = st.number_input("Edad del cliente:", min_value=18, max_value=100, step=1)
 balance = st.number_input("Balance promedio en la cuenta bancaria:")
 campaign = st.number_input("Número de contactos realizados durante esta campaña:")
-pdays = st.number_input("Número de días desde el último contacto previo:")
-previous = st.number_input("Número de contactos previos realizados:")
 housing = st.selectbox("¿Tiene hipoteca?", options=['Sí', 'No'])
 loan = st.selectbox("¿Tiene préstamo personal?", options=['Sí', 'No'])
 
@@ -33,8 +31,8 @@ loan_map = {'No': 0, 'Sí': 1}
 
 
 try:
-    input_data = np.array([[age, balance, campaign, pdays, previous, housing_map[housing], loan_map[loan]]])
-    input_data_df = pd.DataFrame(input_data, columns=['age', 'balance', 'campaign', 'pdays', 'previous', 'housing', 'loan'])
+    input_data = np.array([[age, balance, campaign, housing_map[housing], loan_map[loan]]])
+    input_data_df = pd.DataFrame(input_data, columns=['age', 'balance', 'campaign', 'housing', 'loan'])
     st.write(f"Columnas en el DataFrame antes del escalador: {input_data_df.columns.tolist()}")
 
     
